@@ -35,3 +35,25 @@ export const getAllAlbumsWithoutLabel = async () => {
         return [];
     }
 }
+
+
+export const getAlbumsToUpdateReleaseDate = async () => {
+    try {
+        
+        const albums = await db.album.findMany({
+            where : {
+                release : {
+                    gte : new Date("2025-12-19")
+                }
+            },
+            orderBy : {
+                name : "asc"
+            }
+        });
+
+        return albums;
+
+    } catch (error) {
+        return [];
+    }
+}

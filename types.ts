@@ -21,3 +21,12 @@ export type SyntheticDataResponse = {
     mood: string[],
     instrumentation: string[]
 }
+
+export interface Service {
+    id: string;
+    name: string;
+    url: string;
+    metadata: JSON;
+    created_at: string;
+    updated_at: string;
+}

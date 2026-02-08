@@ -1,8 +1,15 @@
 import { genAI } from "./ai";
 
-const model = genAI.getGenerativeModel({ model: "text-embedding-004"});
 
 export const generateEmbeddings = async(text: string)=>{
-    const embedding = await model.embedContent(text);
-    return Array.from(embedding.embedding.values);
+    
+    const embedding = await genAI.models.embedContent({
+        model: "gemini-embedding-001",
+        contents : text,
+        config : {
+            outputDimensionality : 768,
+            taskType : "RETRIEVAL_QUERY"
+        }
+    });
+    return Array.from(embedding?.embeddings?.[0]?.values || []);
 }

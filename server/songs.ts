@@ -17,6 +17,11 @@ export const getSongs = async () => {
         where : {
             id : {
                 notIn : ids
+            },
+            album : {
+                release : {
+                    gte : new Date("2025-12-19")
+                }
             }
         },
         orderBy : {

@@ -22,7 +22,10 @@ import {
     Brain, 
     Heart, 
     Headphones, 
-    ActivityIcon
+    ActivityIcon,
+    Cog,
+    Workflow,
+    Calendar
 } from "lucide-react";
 
 export const Sidebar = () => {
@@ -30,6 +33,12 @@ export const Sidebar = () => {
     const pathname = usePathname();
 
     const dataEntryLinks = useMemo(()=>[
+        {
+            href:"/automate",
+            name:"Automate",
+            icon: Workflow,
+            isActive: pathname === "/automate"
+        },
         {
             href:"/artist",
             name:"Artist",
@@ -119,10 +128,22 @@ export const Sidebar = () => {
             name:"Audio Processing",
             icon: Headphones,
             isActive: pathname === "/audio-processing"
+        },
+        {
+            href:"/release-date",
+            name:"Release Date",
+            icon: Calendar,
+            isActive: pathname === "/release-date"
         }
     ], [pathname]);
 
     const dashboardLinks = useMemo(()=>[
+        {
+            href : "/tools",
+            name : "Tools",
+            icon : Cog,
+            isActive : pathname === "/tools"
+        },
         {
             href : "/analytics",
             name : "Analytics",
