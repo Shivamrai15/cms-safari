@@ -7,7 +7,6 @@ import { LyricsSchema } from "@/schema/lyrics.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox"
 
-
 import {
     Form,
     FormControl,
@@ -64,8 +63,6 @@ export const LyricsForm = ({
             setLoading(false);
         }
     }
-
-
 
     return (
         <Form {...form}>

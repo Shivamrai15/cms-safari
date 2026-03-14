@@ -25,7 +25,8 @@ import {
     ActivityIcon,
     Cog,
     Workflow,
-    Calendar
+    Calendar,
+    ImagesIcon
 } from "lucide-react";
 
 export const Sidebar = () => {
@@ -134,6 +135,12 @@ export const Sidebar = () => {
             name:"Release Date",
             icon: Calendar,
             isActive: pathname === "/release-date"
+        },
+        {
+            href:"/images",
+            name:"Update Images",
+            icon: ImagesIcon,
+            isActive: pathname === "/images"
         }
     ], [pathname]);
 

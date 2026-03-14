@@ -46,58 +46,59 @@ export async function POST ( req: Request ) {
             }
         });
         
-        const generatedData = await generateSyntheticData({
-            albumName : song.album.name,
-            songName : song.name,
-            artists : song.artists.map(artist=>artist.name),
-            releaseYear : song.album.release.getFullYear()
-        });
+        // const generatedData = null;
+        // const generatedData = await generateSyntheticData({
+        //     albumName : song.album.name,
+        //     songName : song.name,
+        //     artists : song.artists.map(artist=>artist.name),
+        //     releaseYear : song.album.release.getFullYear()
+        // });
 
         let embeddingText = song.name.toLocaleLowerCase();
 
-        if (generatedData) {
+        // if (generatedData) {
 
-            try {
+        //     try {
       
-                const moods = await db.mood.createMany({
-                    data: generatedData.mood.map(mood => ({
-                    name: formatName(mood)
-                    }))
-                });
+        //         const moods = await db.mood.createMany({
+        //             data: generatedData.mood.map(mood => ({
+        //             name: formatName(mood)
+        //             }))
+        //         });
 
-            } catch (error) {
+        //     } catch (error) {
             
-            }
+        //     }
 
-            const moodIds = await db.mood.findMany({
-            where : {
-                name : {
-                    in : generatedData.mood.map(mood => formatName(mood))
-                }
-            },
-            select : {
-                id : true,
-                name : true
-            }
-            });
+        //     const moodIds = await db.mood.findMany({
+        //     where : {
+        //         name : {
+        //             in : generatedData.mood.map(mood => formatName(mood))
+        //         }
+        //     },
+        //     select : {
+        //         id : true,
+        //         name : true
+        //     }
+        //     });
 
-            const { mood, ...metadataWithoutMood } = generatedData;
+        //     const { mood, ...metadataWithoutMood } = generatedData;
             
-            const metadata = await db.metadata.create({
-                data : {
-                    songId : song.id,
-                    ...metadataWithoutMood,
-                    moods : {
-                        connect: moodIds.map(mood => ({ id: mood.id }))
-                    }
-                },
-            });
+        //     const metadata = await db.metadata.create({
+        //         data : {
+        //             songId : song.id,
+        //             ...metadataWithoutMood,
+        //             moods : {
+        //                 connect: moodIds.map(mood => ({ id: mood.id }))
+        //             }
+        //         },
+        //     });
 
-            const uniqueGenres = new Set([metadata.genre, ...moodIds.map(mood => mood.name)]);
-            const genreAndMood = Array.from(uniqueGenres).join(" ");
-            embeddingText = `${song.name.toLocaleLowerCase()} ${genreAndMood}`.trim();
+        //     const uniqueGenres = new Set([metadata.genre, ...moodIds.map(mood => mood.name)]);
+        //     const genreAndMood = Array.from(uniqueGenres).join(" ");
+        //     embeddingText = `${song.name.toLocaleLowerCase()} ${genreAndMood}`.trim();
 
-        }
+        // }
 
         const vector = await generateEmbeddings(embeddingText);
         const vectorSong = {

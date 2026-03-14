@@ -30,6 +30,7 @@ model User {
   Authenticator       Authenticator[]
   autoPlaylists       AutoPlaylist[]
   dailyMixes          DailyMix[]
+  notifications       Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,6 +103,8 @@ model Song {
   autoPlaylistSongs AutoPlaylistSong[]
   dailyMixSongs     DailyMixSong[]
   metadata          Metadata?
+  language          String             @default("")
+  hasLyrics         Boolean?
 
   @@index([albumId, name])
 }
@@ -443,4 +446,29 @@ model Metadata {
   moodIds         String[] @db.ObjectId
   moods           Mood[]   @relation(fields: [moodIds], references: [id])
   instrumentation String[]
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ALERT
+}
+
+model Notification {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String           @db.ObjectId
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         NotificationType
+  title        String
+  message      String
+  image        String?
+  webIcon      String?
+  appIcon      String?
+  webActionUrl String?
+  appActionUrl String?
+  read         Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([userId])
 }

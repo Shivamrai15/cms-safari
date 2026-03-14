@@ -1,10 +1,10 @@
 import { LyricsForm } from "@/components/development/form/lyrics-form";
-import { getSongs } from "@/server/songs"
+import { getSongsWithoutLyrics } from "@/server/songs"
 
 
 const LyricsPage = async() => {
     
-    const songs = await getSongs();
+    const songs = await getSongsWithoutLyrics();
     
     return (
         <div className="flex flex-col items-center py-10 space-y-10" >

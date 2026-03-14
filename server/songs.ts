@@ -4,26 +4,7 @@ import { db } from "@/lib/db";
 
 export const getSongs = async () => {
 
-    const ly = await db.lyrics.findMany({
-        select : {
-            songId : true
-        }
-    });
-    
-
-    const ids = ly.map((id)=>id.songId);
-
     const songs = await db.song.findMany({
-        where : {
-            id : {
-                notIn : ids
-            },
-            album : {
-                release : {
-                    gte : new Date("2025-12-19")
-                }
-            }
-        },
         orderBy : {
             name : "asc"
         }
@@ -82,15 +63,33 @@ export const getPreProcessSongs = async () => {
     }
 }
 
-
 export const getSongsWithoutEmbeddings = async () => {
+
+    const songs = await db.song.findMany({
+        where : {
+            embedding : {
+                is : null
+        }
+    }});
     
-        const songs = await db.song.findMany({
-            where : {
-                embedding : {
-                    is : null
+    return songs;
+}
+
+
+export const getSongsWithoutLyrics = async () => {
+    const songs = await db.song.findMany({
+        where : {
+            hasLyrics : {
+                isSet : false
+            },
+            name : {
+                startsWith : "C"
             }
-        }});
-        
-        return songs;
+        },
+        orderBy : {
+            name : "asc"
+        }
+    });
+
+    return songs;
 }

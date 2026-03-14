@@ -20,12 +20,31 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select";
+} from "@/components/ui/select";
+
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { GenreSongSchema } from "@/schema/genre-song.schema";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface GenreSongsFormProps {
     songs : Song[];
@@ -102,28 +121,75 @@ export const GenreSongsForm = ({
                         render={({field})=>(
                             <FormItem>
                                 <FormLabel className="mr-4">Song</FormLabel>
-                                    <Select onValueChange={(value)=>{
-                                        field.onChange(value)
-                                    }} defaultValue={field.value}>
-                                        <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a song" />
-                                        </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {
-                                                songs.map((song)=>(
-                                                    <SelectItem key={song.id} value={song.id}>
-                                                        {song.name}
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    className={cn(
+                                                        "w-full justify-between",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value
+                                                        ? songs.find(
+                                                            (song) => song.id === field.value
+                                                        )?.name
+                                                        : "Select Song"}
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-full p-0">
+                                        <Command>
+                                            <CommandInput placeholder="Search Songs..." />
+                                            <CommandList>
+                                            <CommandEmpty>No Song found.</CommandEmpty>
+                                            <CommandGroup>
+                                                {songs.map((song) => (
+                                                <CommandItem
+                                                        value={song.name.toLowerCase()}
+                                                        className="w-full"
+                                                        key={song.id}
+                                                        onSelect={() => {
+                                                        form.setValue("songId", song.id);
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            song.id === field.value
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {song.name}
+                                                </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                        </PopoverContent>
+                                    </Popover>
                                 <FormMessage/>
                             </FormItem>
                         )}
                     />
+                    <div className="flex items-center justify-center">
+                        {
+                            form.watch("songId") && (
+                                <div className="size-40 overflow-hidden relative rounded-md">
+                                    <Image
+                                        src={songs.find((song)=>song.id===form.watch("songId"))?.image || "/placeholder.png"}
+                                        fill
+                                        alt="Song Image"
+                                        className="object-contain"
+                                    />
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
                 <Button
                     type="submit"

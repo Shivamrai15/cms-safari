@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface ReleaseDateFormProps {
     albums: Album[];
@@ -50,6 +51,8 @@ export const ReleaseDateForm = ({ albums }: ReleaseDateFormProps) => {
             toast.error("Failed to update release date");
         }
     }
+
+    const selectedAlbumId = form.watch("albumId");
 
     const { isSubmitting } = form.formState;
     
@@ -91,6 +94,20 @@ export const ReleaseDateForm = ({ albums }: ReleaseDateFormProps) => {
                         </FormItem>
                     )}
                 />
+                {
+                    selectedAlbumId && (
+                        <div className="flex items-center justify-center">
+                            <div className="size-44 rounded-md relative overflow-hidden">
+                                <Image
+                                    src={albums.find(album => album.id === selectedAlbumId)?.image || ""}
+                                    alt="Album Cover"
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                        </div>
+                    )
+                }
                 <FormField
                     control={form.control}
                     name="releaseDate"

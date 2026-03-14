@@ -14,13 +14,51 @@ export async function POST ( req : Request ) {
 
         const data = isValidated.data;
 
-        await db.lyrics.create({
-            data : {
-                songId : data.songId,
-                lyrics : JSON.parse(data.lyrics),
-                synced : data.synced,
+        if (data.lyrics.length > 0) {
+
+            let parsedLyrics = {};
+
+            if (data.synced) {
+                const lyrics = JSON.parse(data.lyrics);
+                const updatedLyrics = [];
+                for (const line of lyrics) {
+                    updatedLyrics.push({
+                        time: Number.parseInt(line["startTimeMs"]) * 0.001,
+                        text: line["words"].charAt(0).toUpperCase() + line["words"].slice(1)
+                    })
+                }
+                parsedLyrics = { lyrics: updatedLyrics };
+            } else {
+                parsedLyrics = JSON.parse(data.lyrics);
             }
-        });
+
+            await db.lyrics.create({
+                data : {
+                    songId : data.songId,
+                    lyrics : parsedLyrics,
+                    synced : data.synced,
+                }
+            });
+            
+            await db.song.update({
+                where : {
+                    id : data.songId
+                },
+                data : {
+                    hasLyrics : true
+                }
+            });
+
+        } else {
+            await db.song.update({
+                where : {
+                    id : data.songId
+                },
+                data : {
+                    hasLyrics : false
+                }
+            });
+        }
 
         return NextResponse.json({success : true}, { status:201 });
         
